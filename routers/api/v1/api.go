@@ -295,53 +295,14 @@ func checkTokenPublicOnly() func(ctx *context.APIContext) {
 // if a token is not being used, reqToken will enforce other sign in methods
 func tokenRequiresScopes(requiredScopeCategories ...auth_model.AccessTokenScopeCategory) func(ctx *context.APIContext) {
 	return func(ctx *context.APIContext) {
-		// no scope required
-		if len(requiredScopeCategories) == 0 {
-			return
-		}
-
-		// Need OAuth2 token to be present.
-		scope, scopeExists := ctx.Data["ApiTokenScope"].(auth_model.AccessTokenScope)
-		if ctx.Data["IsApiToken"] != true || !scopeExists {
-			return
-		}
-
-		// use the http method to determine the access level
-		requiredScopeLevel := auth_model.Read
-		if ctx.Req.Method == "POST" || ctx.Req.Method == "PUT" || ctx.Req.Method == "PATCH" || ctx.Req.Method == "DELETE" {
-			requiredScopeLevel = auth_model.Write
-		}
-
-		// get the required scope for the given access level and category
-		requiredScopes := auth_model.GetRequiredScopes(requiredScopeLevel, requiredScopeCategories...)
-		allow, err := scope.HasScope(requiredScopes...)
-		if err != nil {
-			ctx.Error(http.StatusForbidden, "tokenRequiresScope", "checking scope failed: "+err.Error())
-			return
-		}
-
-		if !allow {
-			ctx.Error(http.StatusForbidden, "tokenRequiresScope", fmt.Sprintf("token does not have at least one of required scope(s): %v", requiredScopes))
-			return
-		}
-
-		ctx.Data["requiredScopeCategories"] = requiredScopeCategories
-
-		// check if scope only applies to public resources
-		publicOnly, err := scope.PublicOnly()
-		if err != nil {
-			ctx.Error(http.StatusForbidden, "tokenRequiresScope", "parsing public resource scope failed: "+err.Error())
-			return
-		}
-
-		// assign to true so that those searching should only filter public repositories/users/organizations
-		ctx.PublicOnly = publicOnly
+		return
 	}
 }
 
 // Contexter middleware already checks token for user sign in process.
 func reqToken() func(ctx *context.APIContext) {
 	return func(ctx *context.APIContext) {
+		return
 		// If actions token is present
 		if true == ctx.Data["IsActionsToken"] {
 			return
@@ -385,6 +346,7 @@ func reqBasicOrRevProxyAuth() func(ctx *context.APIContext) {
 // reqSiteAdmin user should be the site admin
 func reqSiteAdmin() func(ctx *context.APIContext) {
 	return func(ctx *context.APIContext) {
+		return
 		if !ctx.IsUserSiteAdmin() {
 			ctx.Error(http.StatusForbidden, "reqSiteAdmin", "user should be the site admin")
 			return

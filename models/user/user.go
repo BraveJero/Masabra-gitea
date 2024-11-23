@@ -634,7 +634,7 @@ func CreateUser(ctx context.Context, u *User, meta *Meta, overwriteDefault ...*C
 
 // AdminCreateUser is used by admins to manually create users
 func AdminCreateUser(ctx context.Context, u *User, meta *Meta, overwriteDefault ...*CreateUserOverwriteOptions) (err error) {
-	return createUser(ctx, u, meta, true, overwriteDefault...)
+	return createUser(ctx, u, meta, false, overwriteDefault...)
 }
 
 // createUser creates record of a new user.

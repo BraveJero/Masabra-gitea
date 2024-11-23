@@ -1,5 +1,28 @@
 # Gitea
 
+# Custom Masabra run config
+```
+docker network create gitea-network
+```
+```
+docker run -d \
+ --name giteadb \
+ -e POSTGRES_USER=postgres \
+ -e POSTGRES_PASSWORD=postgres \
+ -e POSTGRES_DB=gitea \
+ -p 3333:5432 \
+ postgres:14
+```
+```
+docker network connect gitea-network giteadb
+```
+```
+docker build -t mariana-gitea .
+```
+```
+sudo docker run -d --name gitea5 --network gitea-network -p 80:3000   -e DB_TYPE=postgres  -e DB_HOST=giteadb:5432  -e DB_NAME=gitea  -e DB_USER=postgres  -e DB_PASSWD=postgres -v /mnt/disks/gitea-data:/data mariana-gitea
+```
+
 [![](https://github.com/go-gitea/gitea/actions/workflows/release-nightly.yml/badge.svg?branch=main)](https://github.com/go-gitea/gitea/actions/workflows/release-nightly.yml?query=branch%3Amain "Release Nightly")
 [![](https://img.shields.io/discord/322538954119184384.svg?logo=discord&logoColor=white&label=Discord&color=5865F2)](https://discord.gg/Gitea "Join the Discord chat at https://discord.gg/Gitea")
 [![](https://goreportcard.com/badge/code.gitea.io/gitea)](https://goreportcard.com/report/code.gitea.io/gitea "Go Report Card")
