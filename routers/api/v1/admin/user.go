@@ -152,8 +152,6 @@ func CreateUser(ctx *context.APIContext) {
 		ctx.Resp.Header().Add("X-Gitea-Warning", fmt.Sprintf("the domain of user email %s conflicts with EMAIL_DOMAIN_ALLOWLIST or EMAIL_DOMAIN_BLOCKLIST", u.Email))
 	}
 
-	log.Trace("Account created by admin (%s): %s", ctx.Doer.Name, u.Name)
-
 	// Send email notification.
 	if form.SendNotify {
 		mailer.SendRegisterNotifyMail(u)

