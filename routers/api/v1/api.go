@@ -905,6 +905,13 @@ func Routes() *web.Router {
 		})
 	}
 
+	// Misc (public accessible)
+	m.Group("/admin", func() {
+		m.Group("/users", func() {
+			m.Post("", bind(api.CreateUserOption{}), admin.CreateUser)
+		})
+	})
+
 	m.Group("", func() {
 		// Miscellaneous (no scope required)
 		if setting.API.EnableSwagger {
@@ -1597,52 +1604,6 @@ func Routes() *web.Router {
 			})
 			m.Get("/activities/feeds", org.ListTeamActivityFeeds)
 		}, tokenRequiresScopes(auth_model.AccessTokenScopeCategoryOrganization), orgAssignment(false, true), reqToken(), reqTeamMembership(), checkTokenPublicOnly())
-
-		m.Group("/admin", func() {
-			m.Group("/cron", func() {
-				m.Get("", admin.ListCronTasks)
-				m.Post("/{task}", admin.PostCronTask)
-			})
-			m.Get("/orgs", admin.GetAllOrgs)
-			m.Group("/users", func() {
-				m.Get("", admin.SearchUsers)
-				m.Post("", bind(api.CreateUserOption{}), admin.CreateUser)
-				m.Group("/{username}", func() {
-					m.Combo("").Patch(bind(api.EditUserOption{}), admin.EditUser).
-						Delete(admin.DeleteUser)
-					m.Group("/keys", func() {
-						m.Post("", bind(api.CreateKeyOption{}), admin.CreatePublicKey)
-						m.Delete("/{id}", admin.DeleteUserPublicKey)
-					})
-					m.Get("/orgs", org.ListUserOrgs)
-					m.Post("/orgs", bind(api.CreateOrgOption{}), admin.CreateOrg)
-					m.Post("/repos", bind(api.CreateRepoOption{}), admin.CreateRepo)
-					m.Post("/rename", bind(api.RenameUserOption{}), admin.RenameUser)
-					m.Get("/badges", admin.ListUserBadges)
-					m.Post("/badges", bind(api.UserBadgeOption{}), admin.AddUserBadges)
-					m.Delete("/badges", bind(api.UserBadgeOption{}), admin.DeleteUserBadges)
-				}, context.UserAssignmentAPI())
-			})
-			m.Group("/emails", func() {
-				m.Get("", admin.GetAllEmails)
-				m.Get("/search", admin.SearchEmail)
-			})
-			m.Group("/unadopted", func() {
-				m.Get("", admin.ListUnadoptedRepositories)
-				m.Post("/{username}/{reponame}", admin.AdoptRepository)
-				m.Delete("/{username}/{reponame}", admin.DeleteUnadoptedRepository)
-			})
-			m.Group("/hooks", func() {
-				m.Combo("").Get(admin.ListHooks).
-					Post(bind(api.CreateHookOption{}), admin.CreateHook)
-				m.Combo("/{id}").Get(admin.GetHook).
-					Patch(bind(api.EditHookOption{}), admin.EditHook).
-					Delete(admin.DeleteHook)
-			})
-			m.Group("/runners", func() {
-				m.Get("/registration-token", admin.GetRegistrationToken)
-			})
-		}, tokenRequiresScopes(auth_model.AccessTokenScopeCategoryAdmin), reqToken(), reqSiteAdmin())
 
 		m.Group("/topics", func() {
 			m.Get("/search", repo.TopicSearch)

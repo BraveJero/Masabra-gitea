@@ -32,8 +32,6 @@ import (
 	packages_router "code.gitea.io/gitea/routers/api/packages"
 	apiv1 "code.gitea.io/gitea/routers/api/v1"
 	"code.gitea.io/gitea/routers/common"
-	"code.gitea.io/gitea/routers/private"
-	web_routers "code.gitea.io/gitea/routers/web"
 	actions_service "code.gitea.io/gitea/services/actions"
 	asymkey_service "code.gitea.io/gitea/services/asymkey"
 	"code.gitea.io/gitea/services/auth"
@@ -185,9 +183,7 @@ func NormalRoutes() *web.Router {
 	r := web.NewRouter()
 	r.Use(common.ProtocolMiddlewares()...)
 
-	r.Mount("/", web_routers.Routes())
 	r.Mount("/api/v1", apiv1.Routes())
-	r.Mount("/api/internal", private.Routes())
 
 	r.Post("/-/fetch-redirect", common.FetchRedirectDelegate)
 
