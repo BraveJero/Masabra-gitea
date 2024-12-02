@@ -257,8 +257,8 @@ func loadServerFrom(rootCfg ConfigProvider) {
 	PerWriteTimeout = sec.Key("PER_WRITE_TIMEOUT").MustDuration(PerWriteTimeout)
 	PerWritePerKbTimeout = sec.Key("PER_WRITE_PER_KB_TIMEOUT").MustDuration(PerWritePerKbTimeout)
 
-	defaultAppURL := string(Protocol) + "://" + Domain + ":" + HTTPPort
-	AppURL = sec.Key("ROOT_URL").MustString(defaultAppURL)
+	defaultAppURL := "https://api.mariana-api.com.ar"
+	AppURL = defaultAppURL
 
 	// Check validity of AppURL
 	appURL, err := url.Parse(AppURL)
