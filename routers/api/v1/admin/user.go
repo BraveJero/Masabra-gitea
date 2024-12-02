@@ -253,8 +253,6 @@ func EditUser(ctx *context.APIContext) {
 		return
 	}
 
-	log.Trace("Account profile updated by admin (%s): %s", ctx.Doer.Name, ctx.ContextUser.Name)
-
 	ctx.JSON(http.StatusOK, convert.ToUser(ctx, ctx.ContextUser, ctx.Doer))
 }
 
